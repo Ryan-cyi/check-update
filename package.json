@@ -1,0 +1,14 @@
+{
+  "name": "check-update",
+  "version": "0.1.0",
+  "private": false,
+  "scripts": {
+    "build": "tsc"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": ["lib/**/*"],
+  "devDependencies": {
+    "typescript": "^4.9.4"
+  }
+}
