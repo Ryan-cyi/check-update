@@ -1,4 +1,16 @@
 Automatically check for updates to the current site
+
+## install
+
+### npm
+```
+npm install --save html-check-update 
+```
+
+### pnpm
+```
+pnpm install --save html-check-update 
+```
 ## Example
 
 ```js
