@@ -1,57 +1,107 @@
+type OnUpdate = () => void
+
+type IConfirm = () => boolean
+
 interface Options {
-    timer?: number
+    delay?: number
+    update: OnUpdate
+    confirm?: IConfirm
 }
 
-export class Updater {
+function delay(timer = 5000){
+    return new Promise(resolve=>{
+        setTimeout(resolve,timer)
+    })
+}
+
+ class Check_1 {
     before_scripts: string[] 
     current_scripts: string[] 
-    dispatch: Record<string, Function[]>
+    onUpdate: OnUpdate
+    confirm: Function | undefined
+    delay: number
     constructor(options: Options) {
         this.before_scripts = [];
         this.current_scripts = []
-        this.dispatch = {}
+        this.confirm = options?.confirm
+        this.onUpdate = options.update
+        this.delay = options?.delay || 10000
         this.init() 
-        this.timing(options?.timer)
     }
 
     async init() {
         const html: string = await this.fetchHomePage()
         this.before_scripts = this.parserScript(html)
+        
     }
 
+    /**
+     * start check html have new version
+     */
+    start(){
+        console.log('Start checking if there are many version updates...')
+        this.timing()
+    }
+
+    /**
+     * @author vincent <vincent.cy@foxmail.com>
+     * @returns {string} home page html plain text
+     */
     async fetchHomePage() {
-        return  await fetch('/').then(res => res.text());
+        const now = Date.now()
+        return  await fetch(`/?time=${now}`).then(res => res.text());
     }
 
+    /**
+     * 
+     * @param {string} html html plain text
+     * @returns {string} script plain text
+     */
     parserScript(html: string) {
         const reg = new RegExp(/<script(?:\s+[^>]*)?>(.*?)<\/script\s*>/ig) 
         return html.match(reg) as string[] 
     }
 
-    on(key: 'noUpdate' | 'update', fn: Function) {
-        (this.dispatch[key] || (this.dispatch[key] = [])).push(fn)  
-        return this;
-    }
-
-    compare(before: string[], current: string[]) {
-        const base = before.length
-        const arr = Array.from(new Set(before.concat(current)))
-        if (arr.length === base) {
-            this.dispatch['no-update'].forEach(fn => {
-                fn()
-            })
-        } else {
-            this.dispatch['update'].forEach(fn => {
-                fn()
-            })
+    /**
+     * 
+     * @param {} before 
+     * @param {} current 
+     * @returns {Promise<void>}
+     */
+   async compare(before: string[], current: string[]): Promise<any> {
+        if (JSON.stringify(before) !== JSON.stringify(current)) {
+            console.log('There is the latest version to update...')
+            const result = this.confirm?.() || window.confirm('The current site has been updated, do you need to reload it?')
+            if(typeof result !== 'boolean'){
+                throw new Error('comfirm function must return boolean')
+            }
+            if(result){
+                window.location.reload();
+                return false
+            }
         }
+        await this.timing()
     }
 
-    timing(time = 10000) {
-        setInterval(async () => {
-            const newHtml = await this.fetchHomePage()
-            this.current_scripts = this.parserScript(newHtml)
-            this.compare(this.before_scripts, this.current_scripts)
-        }, time)
+    async timing() {
+        await delay(this.delay)
+        const newHtml = await this.fetchHomePage()
+        this.current_scripts = this.parserScript(newHtml)
+        this.compare(this.before_scripts, this.current_scripts)
     }
 }
+
+const singleClass = (classname: FunctionConstructor) => {
+    let instance: Function
+    return new Proxy(classname,{
+        construct(target, args){
+            if(!instance){
+                instance = new target(...args)
+                return instance
+            }
+            return instance
+        }
+    })
+}
+
+export const CheckHtml = singleClass(Check_1 as unknown as FunctionConstructor)

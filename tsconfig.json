@@ -5,7 +5,7 @@
       "esnext",
       "DOM"
     ],
-    "module": "commonjs",
+    "module": "ESNext",
     "declaration": true,
     "outDir": "./lib",
     "strict": true
