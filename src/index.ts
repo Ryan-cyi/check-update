@@ -4,7 +4,6 @@ type IConfirm = () => boolean
 
 interface Options {
     delay?: number
-    update: OnUpdate
     confirm?: IConfirm
 }
 
@@ -17,30 +16,20 @@ function delay(timer = 5000){
  class Check_1 {
     before_scripts: string[] 
     current_scripts: string[] 
-    onUpdate: OnUpdate
     confirm: Function | undefined
     delay: number
     constructor(options: Options) {
         this.before_scripts = [];
         this.current_scripts = []
         this.confirm = options?.confirm
-        this.onUpdate = options.update
         this.delay = options?.delay || 10000
         this.init() 
+        this.timing()
     }
 
     async init() {
         const html: string = await this.fetchHomePage()
         this.before_scripts = this.parserScript(html)
-        
-    }
-
-    /**
-     * start check html have new version
-     */
-    start(){
-        console.log('Start checking if there are many version updates...')
-        this.timing()
     }
 
     /**
@@ -91,17 +80,17 @@ function delay(timer = 5000){
     }
 }
 
-const singleClass = (classname: FunctionConstructor) => {
-    let instance: Function
-    return new Proxy(classname,{
-        construct(target, args){
-            if(!instance){
-                instance = new target(...args)
-                return instance
-            }
-            return instance
-        }
-    })
-}
+// const singleClass = <T>(classname: FunctionConstructor) => {
+//     let instance: T
+//     return new Proxy(classname,{
+//         construct(target, args){
+//             if(!instance){
+//                 instance = new target(...args)
+//                 return instance
+//             }
+//             return instance
+//         }
+//     })
+// }
 
-export const CheckHtml = singleClass(Check_1 as unknown as FunctionConstructor)
+export const CheckHtml = Check_1
