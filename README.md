@@ -33,7 +33,8 @@ Join at the entry of the project
 ```js
 import { HtmlCheckUpdate } from 'html-check-update'
 
-new HtmlCheckUpdate({delay: 10000, confirm: () => true })
+new HtmlCheckUpdate({delay: 10000, path: '', confirm: () => true })
+// path -> route
 ```
 
 ### delay - number
@@ -45,6 +46,12 @@ The interval between each check
 default: window.confirm
 
 To customize the prompt interaction, the return value of the prompt interaction interface must be a Boolean type
+
+### path
+
+if site have second path, for `www.xxxx.com/asite` or `www.xxxx.com/bsite`
+
+should set the `path` value `asite` or `bsite`
 
 
 ![image](./screen-snapshot.png)

@@ -5,6 +5,7 @@ export type IConfirm = () => boolean
 export interface Options {
     delay?: number
     confirm?: IConfirm
+    path?: string
 }
 
 function delay(timer = 5000){
@@ -18,17 +19,19 @@ function delay(timer = 5000){
     current_scripts: string[] 
     confirm: Function | undefined
     delay: number
+    path: string
     constructor(options: Options) {
         this.before_scripts = [];
         this.current_scripts = []
         this.confirm = options?.confirm
         this.delay = options?.delay || 10000
+        this.path = options?.path || ''
         this.init() 
         this.timing()
     }
 
     async init() {
-        const html: string = await this.fetchHomePage()
+        const html = await this.fetchHomePage() as string
         this.before_scripts = this.parserScript(html)
     }
 
@@ -36,8 +39,13 @@ function delay(timer = 5000){
      * @returns {string} home page html plain text
      */
     async fetchHomePage() {
-        const now = Date.now()
-        return  await fetch(`/?time=${now}`).then(res => res.text());
+        try{
+            const now = Date.now()
+            const path = (this.path ?? '') + `?time=${now}` 
+            return  await fetch(`/${path}`).then(res => res.text());
+        }catch(e){
+            console.log('check new version error', e)
+        }
     }
 
     /**
@@ -73,7 +81,7 @@ function delay(timer = 5000){
 
     async timing() {
         await delay(this.delay)
-        const newHtml = await this.fetchHomePage()
+        const newHtml = await this.fetchHomePage() as string
         this.current_scripts = this.parserScript(newHtml)
         this.compare(this.before_scripts, this.current_scripts)
     }
