@@ -51,7 +51,7 @@ To customize the prompt interaction, the return value of the prompt interaction 
 
 if site have second path, for `www.xxxx.com/asite` or `www.xxxx.com/bsite`
 
-should set the `path` value `asite` or `bsite`
+should set the `path` value `/asite` or `/bsite`,
 
 
 ![image](./screen-snapshot.png)

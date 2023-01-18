@@ -41,8 +41,11 @@ function delay(timer = 5000){
     async fetchHomePage() {
         try{
             const now = Date.now()
-            const path = (this.path ?? '') + `?time=${now}` 
-            return  await fetch(`/${path}`).then(res => res.text());
+            let path = (this.path ?? '/') + `?time=${now}` 
+            if(!path.match(/^\//)){
+                path = '/' + path
+            }
+            return  await fetch(`${path}`).then(res => res.text());
         }catch(e){
             console.log('check new version error', e)
         }
