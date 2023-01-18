@@ -1,8 +1,8 @@
-type OnUpdate = () => void
+export type OnUpdate = () => void
 
-type IConfirm = () => boolean
+export type IConfirm = () => boolean
 
-interface Options {
+export interface Options {
     delay?: number
     confirm?: IConfirm
 }
@@ -13,7 +13,7 @@ function delay(timer = 5000){
     })
 }
 
- class Check_1 {
+ class HtmlCheckUpdate_ {
     before_scripts: string[] 
     current_scripts: string[] 
     confirm: Function | undefined
@@ -80,17 +80,6 @@ function delay(timer = 5000){
     }
 }
 
-// const singleClass = <T>(classname: FunctionConstructor) => {
-//     let instance: T
-//     return new Proxy(classname,{
-//         construct(target, args){
-//             if(!instance){
-//                 instance = new target(...args)
-//                 return instance
-//             }
-//             return instance
-//         }
-//     })
-// }
+export const HtmlCheckUpdate = HtmlCheckUpdate_
 
-export const CheckHtml = Check_1
+export const CheckHtml = HtmlCheckUpdate_

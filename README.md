@@ -14,15 +14,12 @@ pnpm install --save html-check-update
 ## Example
 
 ```js
-import {CheckHtml} from 'html-check-update'
+import {HtmlCheckUpdate} from 'html-check-update'
 
-const check = new CheckHtml({delay: 10000, confirm:() => true})
+new HtmlCheckUpdate({delay: 10000})
 
 // confirm should return boolean 
 // if true. will reload current page
 // elst not reload
-
-// start check
-check.start()
 
 ```
