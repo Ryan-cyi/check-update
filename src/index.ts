@@ -33,7 +33,6 @@ function delay(timer = 5000){
     }
 
     /**
-     * @author vincent <vincent.cy@foxmail.com>
      * @returns {string} home page html plain text
      */
     async fetchHomePage() {
