@@ -5,18 +5,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test html auto check new version</title>
-    <script id="342"></script>
     <script id="abcd"></script>
-    <script id="33"></script>
+    <script id="2ccc22"></script>
+    <script id="33">
+    function change(){
+        window.document.scripts[2].id = Date.now()
+    }
+    </script>
 </head>
 <body>
     Test html auto check new version
+    <button onclick="change()">
+        change 
+    </button>
 </body>
 <script type="module" >
     import {CheckHtml} from './lib/index.js';
-    const check = new CheckHtml({
+    new CheckHtml({
         delay: 4000, 
+        retry: 10000,
     })
-    check.start()
 </script>
 </html>

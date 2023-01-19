@@ -1,12 +1,13 @@
 {
   "name": "html-check-update",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": false,
   "scripts": {
     "build": "tsc"
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "homepage": "https://github.com/vincent-cy/check-update",
   "files": [
     "lib/**/*"
   ],

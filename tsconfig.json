@@ -6,6 +6,7 @@
       "DOM"
     ],
     "module": "ESNext",
+    "esModuleInterop": true,
     "declaration": true,
     "outDir": "./lib",
     "strict": true
