@@ -37,7 +37,7 @@ new HtmlCheckUpdate({delay: 10000, path: '', confirm: () => true })
 // path -> route
 ```
 
-### delay - number
+### interval - number
 
 The interval between each check
 
@@ -53,7 +53,7 @@ if site have second path, for `www.xxxx.com/asite` or `www.xxxx.com/bsite`
 
 should set the `path` value `/asite` or `/bsite`,
 
-### retry - number
+### delay - number
 
 When the pop-up window pops up, there is no need to refresh immediately, set the time between the next inspection
 

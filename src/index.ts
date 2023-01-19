@@ -7,7 +7,7 @@ export interface I_CheckOptions {
     confirm?: IConfirm
     path?: string
     message?: string
-    retry?: number
+    interval?: number
 }
 
 function delay(timer = 5000) {
@@ -29,7 +29,7 @@ function validTime(num: number): boolean {
 
 const defaultOption: I_CheckOptions = {
     delay: 10000,
-    retry: 120000,
+    interval: 4000,
     confirm: () => Promise.resolve(false),
     message: 'A new version is released and needs to be refreshed.'
 }
@@ -42,15 +42,15 @@ class HtmlCheckUpdate_ {
     constructor(props: I_CheckOptions) {
         this.before_scripts = [];
         this.current_scripts = []
-        if (props.retry && !validTime(props.retry)) {
-            throw new Error('retey must be a number')
+        if (props.interval && !validTime(props.interval)) {
+            throw new Error('interval must be a number')
         }
         if (props.delay && !validTime(props.delay)) {
-            throw new Error('retey must be a number')
+            throw new Error('delay must be a number')
         }
         this.options = { ...defaultOption, ...props }
         this.init()
-        this.starting(this.options.delay!)
+        this.starting(this.options.interval!)
     }
 
     async init() {
@@ -92,7 +92,7 @@ class HtmlCheckUpdate_ {
      */
     async compare(before: string[], current: string[]): Promise<any> {
         if (JSON.stringify(before) !== JSON.stringify(current)) {
-            const reteyTime = Math.floor(this.options.retry! / 1000)
+            const reteyTime = Math.floor(this.options.delay! / 1000)
             const result = await showDialog({
                 message: this.options.message!,
                 confirmBtnText: 'Reload',
@@ -105,17 +105,17 @@ class HtmlCheckUpdate_ {
                 window.location.reload();
                 return false
             } else {
-                await delay(this.options.retry!)
+                await delay(this.options.delay!)
                 await this.starting()
             }
         } else {
-            await this.starting(this.options.delay)
+            await this.starting(this.options.interval)
         }
     }
 
     async starting(timer?: number) {
         // console.log('timer', timer)
-        !!timer && await delay(this.options.delay)
+        !!timer && await delay(this.options.interval)
         const newHtml = await this.fetchHomePage() as string
         this.current_scripts = this.parserScript(newHtml)
         this.compare(this.before_scripts, this.current_scripts)
