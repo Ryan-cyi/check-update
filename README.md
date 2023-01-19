@@ -53,5 +53,14 @@ if site have second path, for `www.xxxx.com/asite` or `www.xxxx.com/bsite`
 
 should set the `path` value `/asite` or `/bsite`,
 
+### retry - number
+
+When the pop-up window pops up, there is no need to refresh immediately, set the time between the next inspection
+
+
+### message - string
+
+Set the popup message. default is `A new version is released and needs to be refreshed.`
+
 
 ![image](./screen-snapshot.png)
