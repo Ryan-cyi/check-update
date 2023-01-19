@@ -92,10 +92,11 @@ class HtmlCheckUpdate_ {
      */
     async compare(before: string[], current: string[]): Promise<any> {
         if (JSON.stringify(before) !== JSON.stringify(current)) {
+            const reteyTime = Math.floor(this.options.retry! / 1000)
             const result = await showDialog({
                 message: this.options.message!,
                 confirmBtnText: 'Reload',
-                delayBtnText: "Delay(120s)"
+                delayBtnText: `Delay(${reteyTime}s)`
             })
             if (typeof result !== 'boolean') {
                 throw new Error('comfirm function must return boolean')
@@ -292,6 +293,9 @@ function showDialog(payload: IDialogPayload) {
         const message = Styled.div`padding:20px 0px;`(payload.message)
 
         content.append(message)
+
+        console.log('xxxxx', payload);
+        
 
         const confirmBtn = Button(payload.confirmBtnText, {
             style: "background-color:#409eff; color: #fff;",
