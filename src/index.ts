@@ -1,29 +1,46 @@
-export type OnUpdate = () => void
+export type OnUpdate = () => void;
 
-export type IConfirm = () => Promise<boolean>
+export type IConfirm = () => Promise<boolean>;
 
 export interface I_CheckOptions {
-    delay?: number
-    confirm?: IConfirm
-    path?: string
-    message?: string
-    interval?: number
+    /**
+     * When the delay prompt is selected, the delay of the next check
+     */
+    delay?: number;
+    confirm?: IConfirm;
+    /**
+     * Subsite paths for micro frontend sites
+     */
+    path?: string;
+    /**
+     * Updated message detected
+     */
+    message?: string;
+    /**
+     * Check interval for updates
+     */
+    interval?: number;
+    /**
+     *  Ignore this check text
+     */
+    igoreText?: string;
+    confirmText?: string;
 }
 
 function delay(timer = 5000) {
-    return new Promise(resolve => {
-        setTimeout(resolve, timer)
-    })
+    return new Promise((resolve) => {
+        setTimeout(resolve, timer);
+    });
 }
 
 function validTime(num: number): boolean {
-    if (typeof num === 'number') {
+    if (typeof num === "number") {
         if (num <= 0) {
-            return false
+            return false;
         }
-        return true
+        return true;
     } else {
-        return false
+        return false;
     }
 }
 
@@ -31,31 +48,33 @@ const defaultOption: I_CheckOptions = {
     delay: 10000,
     interval: 4000,
     confirm: () => Promise.resolve(false),
-    message: 'A new version is released and needs to be refreshed.'
-}
+    message: "A new version is released and needs to be refreshed.",
+    igoreText: "Ignore",
+    confirmText: "Reload",
+};
 
 class HtmlCheckUpdate_ {
-    before_scripts: string[]
-    current_scripts: string[]
-    confirm: Function | undefined
-    options: I_CheckOptions
+    before_scripts: string[];
+    current_scripts: string[];
+    confirm: Function | undefined;
+    options: I_CheckOptions;
     constructor(props: I_CheckOptions) {
         this.before_scripts = [];
-        this.current_scripts = []
+        this.current_scripts = [];
         if (props.interval && !validTime(props.interval)) {
-            throw new Error('interval must be a number')
+            throw new Error("interval must be a number");
         }
         if (props.delay && !validTime(props.delay)) {
-            throw new Error('delay must be a number')
+            throw new Error("delay must be a number");
         }
-        this.options = { ...defaultOption, ...props }
-        this.init()
-        this.starting(this.options.interval!)
+        this.options = { ...defaultOption, ...props };
+        this.init();
+        this.starting(this.options.interval!);
     }
 
     async init() {
-        const html = await this.fetchHomePage() as string
-        this.before_scripts = this.parserScript(html)
+        const html = (await this.fetchHomePage()) as string;
+        this.before_scripts = this.parserScript(html);
     }
 
     /**
@@ -63,74 +82,72 @@ class HtmlCheckUpdate_ {
      */
     async fetchHomePage() {
         try {
-            const now = Date.now()
-            let path = (this.options.path ?? '/') + `?time=${now}`
+            const now = Date.now();
+            let path = (this.options.path ?? "/") + `?time=${now}`;
             if (!path.match(/^\//)) {
-                path = '/' + path
+                path = "/" + path;
             }
-            return await fetch(`${path}`).then(res => res.text());
+            return await fetch(`${path}`).then((res) => res.text());
         } catch (e) {
-            console.log('check new version error', e)
+            console.log("check new version error", e);
         }
     }
 
     /**
-     * 
      * @param {string} html html plain text
      * @returns {string} script plain text
      */
     parserScript(html: string) {
-        const reg = new RegExp(/<script(?:\s+[^>]*)?>(.*?)<\/script\s*>/ig)
-        return html.match(reg) as string[]
+        const reg = new RegExp(/<script(?:\s+[^>]*)?>(.*?)<\/script\s*>/gi);
+        return html.match(reg) as string[];
     }
 
     /**
-     * 
-     * @param {} before 
-     * @param {} current 
+     *
+     * @param {} before
+     * @param {} current
      * @returns {Promise<void>}
      */
     async compare(before: string[], current: string[]): Promise<any> {
         if (JSON.stringify(before) !== JSON.stringify(current)) {
-            const reteyTime = Math.floor(this.options.delay! / 1000)
+            const retryTime = Math.floor(this.options.delay! / 1000);
             const result = await showDialog({
                 message: this.options.message!,
-                confirmBtnText: 'Reload',
-                delayBtnText: `Delay(${reteyTime}s)`
-            })
-            if (typeof result !== 'boolean') {
-                throw new Error('comfirm function must return boolean')
+                confirmBtnText: this.options.confirmText!,
+                delayBtnText: this.options.igoreText!,
+            });
+            if (typeof result !== "boolean") {
+                throw new Error("confirm function must return boolean");
             }
             if (result) {
                 window.location.reload();
-                return false
+                return false;
             } else {
-                await delay(this.options.delay!)
-                await this.starting()
+                await delay(this.options.delay!);
+                await this.starting();
             }
         } else {
-            await this.starting(this.options.interval)
+            await this.starting(this.options.interval);
         }
     }
 
     async starting(timer?: number) {
         // console.log('timer', timer)
-        !!timer && await delay(this.options.interval)
-        const newHtml = await this.fetchHomePage() as string
-        this.current_scripts = this.parserScript(newHtml)
-        this.compare(this.before_scripts, this.current_scripts)
+        !!timer && (await delay(this.options.interval));
+        const newHtml = (await this.fetchHomePage()) as string;
+        this.current_scripts = this.parserScript(newHtml);
+        this.compare(this.before_scripts, this.current_scripts);
     }
 }
 
-export const HtmlCheckUpdate = HtmlCheckUpdate_
+export const HtmlCheckUpdate = HtmlCheckUpdate_;
 
-export const CheckHtml = HtmlCheckUpdate_
+export const CheckHtml = HtmlCheckUpdate_;
 
-
-const tags = ['button', 'div', 'span'] as const
+const tags = ["button", "div", "span"] as const;
 
 function serializeStyles(args: any[], props: any) {
-    var styles = '';
+    var styles = "";
     var strings = args[0];
     if (strings.raw === undefined) {
         styles += handleInterpolation(props, strings);
@@ -140,84 +157,94 @@ function serializeStyles(args: any[], props: any) {
     for (var i = 1; i < args.length; i++) {
         styles += handleInterpolation(props, args[i]);
     }
-    styles = styles.replace(/\r|\n/ig, "")
-    return { styles }
+    styles = styles.replace(/\r|\n/gi, "");
+    return { styles };
 }
 
-function handleInterpolation(props: Record<any, any>, interpolation: object | Function | string): any {
+function handleInterpolation(
+    props: Record<any, any>,
+    interpolation: object | Function | string
+): any {
     switch (typeof interpolation) {
-        case 'object': {
+        case "object": {
             return createStringFromObject(props, interpolation);
         }
-        case 'function': {
+        case "function": {
             if (props !== undefined) {
                 var result = interpolation(props);
                 return handleInterpolation(props, result);
             }
-            break
+            break;
         }
         default:
-            return interpolation
+            return interpolation;
     }
 }
 
-function createStringFromObject(obj: Record<any, any>, interpolation?: object | Function) {
-    var string = '';
+function createStringFromObject(
+    obj: Record<any, any>,
+    interpolation?: object | Function
+) {
+    var string = "";
     for (var key in obj) {
         var value = obj[key];
         string += key + ":" + value + ";";
     }
     return string;
 }
-type GetArrayElementType<T extends readonly any[]> = T extends readonly (infer U)[] ? U : never;
+type GetArrayElementType<T extends readonly any[]> =
+    T extends readonly (infer U)[] ? U : never;
 
-type IStyled = GetArrayElementType<typeof tags>
+type IStyled = GetArrayElementType<typeof tags>;
 
-const Styled = {} as { [key in IStyled]: Function }
+const Styled = {} as { [key in IStyled]: Function };
 
 tags.forEach(function (tagName) {
     Styled[tagName] = (...args: unknown[]) => {
-        const { styles } = serializeStyles(args, {})
-        return (children: string | undefined | HTMLElement | HTMLElement[], other?: { click?: Function, style?: string }): HTMLElement => {
-            const el = document.createElement(tagName)
-            const style = other?.style ? styles + other.style : styles
-            el.setAttribute('style', style)
-            const type = Object.prototype.toString.call(children)
+        const { styles } = serializeStyles(args, {});
+        return (
+            children: string | undefined | HTMLElement | HTMLElement[],
+            other?: { click?: Function; style?: string }
+        ): HTMLElement => {
+            const el = document.createElement(tagName);
+            const style = other?.style ? styles + other.style : styles;
+            el.setAttribute("style", style);
+            const type = Object.prototype.toString.call(children);
             switch (type) {
-                case '[object String]': {
-                    el.innerHTML = children as string
-                    break
+                case "[object String]": {
+                    el.innerHTML = children as string;
+                    break;
                 }
-                case '[object Array]': {
-                    (children as HTMLElement[]).forEach(element => {
-                        el.append(element)
+                case "[object Array]": {
+                    (children as HTMLElement[]).forEach((element) => {
+                        el.append(element);
                     });
-                    break
+                    break;
                 }
                 default: {
-                    children && el.append(children as HTMLElement)
-                    break
+                    children && el.append(children as HTMLElement);
+                    break;
                 }
             }
             if (other?.click) {
-                el.addEventListener('click', () => {
-                    other.click?.()
-                })
+                el.addEventListener("click", () => {
+                    other.click?.();
+                });
             }
-            return el
-        }
-    }
+            return el;
+        };
+    };
 });
 
 const container = Styled.div`
-background-color: rgba(0,0,0,0.1); 
+background-color: rgba(0,0,0,0.25); 
 position: absolute;
 top: 0;
 left: 0;
 right: 0;
 bottom: 0;
 ${getMaxZIndex()};
-`
+`;
 
 const dialogContianer = Styled.div`
 background-color: white; 
@@ -231,21 +258,21 @@ padding: 20px;
 box-sizing: border-box;
 display: flex;
 flex-direction: column;
-`
+`;
 
 const dialogContent = Styled.div`
 box-sizing: border-box;
 background-color: #fff;
 color: #555;
 font-size: 16px;
-`
+`;
 
 const dialogFooter = Styled.div`
 display: flex;
 justify-content: flex-end;
 align-items: flex-end;
 flex:1;
-`
+`;
 const Button = Styled.button`
 display: inline-block;
 line-height: 1;
@@ -268,63 +295,62 @@ padding: 8px 18px;
 font-size: 14px;
 border-radius: 4px;
 margin-left: 14px;
-`
+`;
 
 const Title = Styled.div`
 font-size: 18px;
 font-weight: blod;
 color: #333;
-`
+`;
 
 type IDialogPayload = {
-    message: string
-    confirmBtnText: string
-    delayBtnText: string
-}
+    message: string;
+    confirmBtnText: string;
+    delayBtnText: string;
+};
 
 function showDialog(payload: IDialogPayload) {
-    return new Promise(resolve => {
-        let box = container()
+    return new Promise((resolve) => {
+        let box = container();
 
-        const title = Title("Tip")
+        const title = Title("Tips");
 
-        const content = dialogContent(title)
+        const content = dialogContent(title);
 
-        const message = Styled.div`padding:20px 0px;`(payload.message)
+        const message = Styled.div`padding:20px 0px;`(payload.message);
 
-        content.append(message)
-
-        console.log('xxxxx', payload);
-        
+        content.append(message);
 
         const confirmBtn = Button(payload.confirmBtnText, {
-            style: "background-color:#409eff; color: #fff;",
+            style:
+                "background-color:#409eff; color: #fff;border-style:unset;padding: 9px 18px;",
             click: () => {
-                document.body.removeChild(box)
-                return resolve(true)
-            }
-        })
+                document.body.removeChild(box);
+                return resolve(true);
+            },
+        });
 
         const delayBtn = Button(payload.delayBtnText, {
             click: () => {
-                document.body.removeChild(box)
-                return resolve(false)
-            }
-        })
+                document.body.removeChild(box);
+                return resolve(false);
+            },
+        });
 
-        const footer = dialogFooter([delayBtn, confirmBtn])
+        const footer = dialogFooter([delayBtn, confirmBtn]);
 
-        let dialog = dialogContianer([content, footer])
+        let dialog = dialogContianer([content, footer]);
 
-        box = container(dialog)
+        box = container(dialog);
 
-        document.body.append(box)
-    })
+        document.body.append(box);
+    });
 }
 
-
 function getMaxZIndex(): string {
-    let arr = Array.from(document.querySelectorAll('body *')).map(e => + window.getComputedStyle(e).zIndex || 0);
-    const r = arr.length ? Math.max(...arr) + 1 : 0
-    return `z-index: ${r};`
+    let arr = Array.from(document.querySelectorAll("body *")).map(
+        (e) => +window.getComputedStyle(e).zIndex || 0
+    );
+    const r = arr.length ? Math.max(...arr) + 1 : 0;
+    return `z-index: ${r};`;
 }

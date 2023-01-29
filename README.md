@@ -63,4 +63,6 @@ When the pop-up window pops up, there is no need to refresh immediately, set the
 Set the popup message. default is `A new version is released and needs to be refreshed.`
 
 
+
+
 ![image](./screen-snapshot.png)
