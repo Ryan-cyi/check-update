@@ -23,7 +23,7 @@ export interface I_CheckOptions {
     /**
      *  Ignore this check text
      */
-    igoreText?: string;
+    ignoreText?: string;
     confirmText?: string;
 }
 
@@ -34,14 +34,7 @@ function delay(timer = 5000) {
 }
 
 function validTime(num: number): boolean {
-    if (typeof num === "number") {
-        if (num <= 0) {
-            return false;
-        }
-        return true;
-    } else {
-        return false;
-    }
+    return num > 0;
 }
 
 const defaultOption: I_CheckOptions = {
@@ -49,7 +42,7 @@ const defaultOption: I_CheckOptions = {
     interval: 4000,
     confirm: () => Promise.resolve(false),
     message: "A new version is released and needs to be refreshed.",
-    igoreText: "Ignore",
+    ignoreText: "Ignore",
     confirmText: "Reload",
 };
 
@@ -69,7 +62,7 @@ class HtmlCheckUpdate_ {
         }
         this.options = { ...defaultOption, ...props };
         this.init();
-        this.starting(this.options.interval!);
+        this.run(this.options.interval!);
     }
 
     async init() {
@@ -110,51 +103,42 @@ class HtmlCheckUpdate_ {
      */
     async compare(before: string[], current: string[]): Promise<any> {
         if (JSON.stringify(before) !== JSON.stringify(current)) {
-            const retryTime = Math.floor(this.options.delay! / 1000);
             const result = await showDialog({
                 message: this.options.message!,
                 confirmBtnText: this.options.confirmText!,
-                delayBtnText: this.options.igoreText!,
+                delayBtnText: this.options.ignoreText!,
             });
-            if (typeof result !== "boolean") {
-                throw new Error("confirm function must return boolean");
-            }
             if (result) {
                 window.location.reload();
                 return false;
             } else {
                 await delay(this.options.delay!);
-                await this.starting();
+                await this.run();
             }
         } else {
-            await this.starting(this.options.interval);
+            await this.run(this.options.interval);
         }
     }
 
-    async starting(timer?: number) {
-        // console.log('timer', timer)
+    async run(timer?: number) {
         !!timer && (await delay(this.options.interval));
         const newHtml = (await this.fetchHomePage()) as string;
         this.current_scripts = this.parserScript(newHtml);
-        this.compare(this.before_scripts, this.current_scripts);
+        await this.compare(this.before_scripts, this.current_scripts);
     }
 }
-
-export const HtmlCheckUpdate = HtmlCheckUpdate_;
-
-export const CheckHtml = HtmlCheckUpdate_;
 
 const tags = ["button", "div", "span"] as const;
 
 function serializeStyles(args: any[], props: any) {
-    var styles = "";
-    var strings = args[0];
+    let styles = "";
+    let strings = args[0];
     if (strings.raw === undefined) {
         styles += handleInterpolation(props, strings);
     } else {
         styles += strings[0];
     }
-    for (var i = 1; i < args.length; i++) {
+    for (let i = 1; i < args.length; i++) {
         styles += handleInterpolation(props, args[i]);
     }
     styles = styles.replace(/\r|\n/gi, "");
@@ -171,7 +155,7 @@ function handleInterpolation(
         }
         case "function": {
             if (props !== undefined) {
-                var result = interpolation(props);
+                const result = interpolation(props);
                 return handleInterpolation(props, result);
             }
             break;
@@ -185,13 +169,14 @@ function createStringFromObject(
     obj: Record<any, any>,
     interpolation?: object | Function
 ) {
-    var string = "";
-    for (var key in obj) {
-        var value = obj[key];
+    let string = "";
+    for (let key in obj) {
+        let value = obj[key];
         string += key + ":" + value + ";";
     }
     return string;
 }
+
 type GetArrayElementType<T extends readonly any[]> =
     T extends readonly (infer U)[] ? U : never;
 
@@ -322,8 +307,7 @@ function showDialog(payload: IDialogPayload) {
         content.append(message);
 
         const confirmBtn = Button(payload.confirmBtnText, {
-            style:
-                "background-color:#409eff; color: #fff;border-style:unset;padding: 9px 18px;",
+            style: "background-color: var(--primary-color, #409eff); color: #fff;border-style:unset;padding: 9px 18px;",
             click: () => {
                 document.body.removeChild(box);
                 return resolve(true);
@@ -354,3 +338,7 @@ function getMaxZIndex(): string {
     const r = arr.length ? Math.max(...arr) + 1 : 0;
     return `z-index: ${r};`;
 }
+
+export const HtmlCheckUpdate = HtmlCheckUpdate_;
+
+export const CheckHtml = HtmlCheckUpdate_;
