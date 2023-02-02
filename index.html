@@ -7,11 +7,11 @@
     <title>Test html auto check new version</title>
     <style>
         :root{
-            /*--primary-color: red;*/
+            --primary-color: #0081f0;
             --big: 20px
         }
     </style>
-    <script id="xx"></script>
+    <script id="222"></script>
 </head>
 <body>
     Test html auto check new version
@@ -21,6 +21,9 @@
     new HtmlCheckUpdate({
         delay: 10000,
         interval: 3000,
+        // ignoreText: "延迟",
+        // confirmText: "立即刷新",
+        // message: "检测到有新版本发布, 是否需要刷新?"
     })
 </script>
 </html>

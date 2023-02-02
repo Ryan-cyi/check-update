@@ -141,7 +141,7 @@ function serializeStyles(args: any[], props: any) {
     for (let i = 1; i < args.length; i++) {
         styles += handleInterpolation(props, args[i]);
     }
-    styles = styles.replace(/\r|\n/gi, "");
+    styles = styles.replace(/\r|\n/gi, "").trim();
     return { styles };
 }
 
@@ -221,15 +221,7 @@ tags.forEach(function (tagName) {
     };
 });
 
-const container = Styled.div`
-background-color: rgba(0,0,0,0.25); 
-position: absolute;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-${getMaxZIndex()};
-`;
+
 
 const dialogContianer = Styled.div`
 background-color: white; 
@@ -296,7 +288,9 @@ type IDialogPayload = {
 
 function showDialog(payload: IDialogPayload) {
     return new Promise((resolve) => {
-        let box = container();
+        const index = getMaxZIndex()
+
+        const container = Styled.div`background-color: rgba(0,0,0,0.25); position: absolute;top: 0;left: 0;right: 0;bottom: 0;z-index: ${index};`
 
         const title = Title("Tips");
 
@@ -325,18 +319,17 @@ function showDialog(payload: IDialogPayload) {
 
         let dialog = dialogContianer([content, footer]);
 
-        box = container(dialog);
+        const box = container(dialog);
 
         document.body.append(box);
     });
 }
 
-function getMaxZIndex(): string {
+function getMaxZIndex(): number {
     let arr = Array.from(document.querySelectorAll("body *")).map(
         (e) => +window.getComputedStyle(e).zIndex || 0
     );
-    const r = arr.length ? Math.max(...arr) + 1 : 0;
-    return `z-index: ${r};`;
+    return arr.length ? Math.max(...arr) + 1 : 0;
 }
 
 export const HtmlCheckUpdate = HtmlCheckUpdate_;

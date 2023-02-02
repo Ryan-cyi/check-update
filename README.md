@@ -1,12 +1,7 @@
-How redeployment notifies users to refresh the web page
 
-Sometimes after going online, the user still stays on theold page. The user does not know that the webpage has been re-deployed. When jumping to the page, sometimes the hash of the js connection changes, resulting in an error report and the user cannot experience the new function.
+单页面重新部署后通知用户刷新网页
 
-The solution is to judge according to the hash value of the script src generated after packaging. Each packaging will generate a unique hash value. As long as the polling is different, it must be re-deployed.
-
-## User Guide
-
-### install
+### 安装依赖
 
 #### npm
 
@@ -26,43 +21,57 @@ pnpm install --save html-check-update
 yarn add html-check-update 
 ```
 
-## Example
+## 示例
 
-Join at the entry of the project
+在项目入口如
 
 ```js
 import { HtmlCheckUpdate } from 'html-check-update'
 
-new HtmlCheckUpdate({delay: 10000, path: '', confirm: () => true })
+new HtmlCheckUpdate({delay: 600000, interval: 15000})
 // path -> route
 ```
 
-### interval - number
+### interval 
 
-The interval between each check
+设置每次检查更新请求的时间间隔
 
 ### confirm - function
 
-default: window.confirm
+### path 子站点的路径设置
 
-To customize the prompt interaction, the return value of the prompt interaction interface must be a Boolean type
+使用场景为 微前端 或者 子站点应用
 
-### path
+如:`www.xxxx.com/asite` 活 `www.xxxx.com/bsite` 这些子应用时
 
-if site have second path, for `www.xxxx.com/asite` or `www.xxxx.com/bsite`
+需要设置 `path` 的值 `/asite` 或者 `/bsite`,
 
-should set the `path` value `/asite` or `/bsite`,
+### delay
 
-### delay - number
-
-When the pop-up window pops up, there is no need to refresh immediately, set the time between the next inspection
-
+当忽略本次更新，设置间隔下次更新的时间
 
 ### message - string
 
-Set the popup message. default is `A new version is released and needs to be refreshed.`
+设置弹出框的提示语, 默认 `A new version is released and needs to be refreshed.`
 
+![screen-snapshot1.png](https://cdn.wekic.com/_blog/1675327262789-screen-snapshot1.png)
 
+### 设置按钮颜色
 
+使用css变量 读取 `--primary-color`, 默认按钮颜色 `#409eff`
 
-![image](./screen-snapshot.png)
+## 示例配置
+
+```js
+new HtmlCheckUpdate({
+        delay: 10000,
+        interval: 3000,
+        ignoreText: "延迟",
+        confirmText: "立即刷新",
+        message: "检测到有新版本发布, 是否需要刷新?"
+})
+```
+
+效果图
+
+![screen-snapshot-2.png](https://cdn.wekic.com/_blog/1675327193660-screen-snapshot-2.png)
