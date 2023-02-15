@@ -1,16 +1,14 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "esnext",
-      "DOM"
-    ],
-    "module": "ESNext",
+    "target": "es2018",
+    "module": "esnext",
+    "lib": ["esnext","DOM"],
+    "moduleResolution": "node",
     "esModuleInterop": true,
-    "declaration": true,
-    "outDir": "./lib",
-    "strict": true
-  },
-  "include": ["src"],
-  "exclude": ["node_modules", "**/__tests__/*"]
+    "strict": true,
+    "strictNullChecks": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true
+  }
 }

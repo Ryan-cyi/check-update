@@ -1,17 +1,64 @@
 {
   "name": "html-check-update",
+  "type": "module",
   "version": "1.1.4",
-  "private": false,
-  "scripts": {
-    "build": "tsc"
+  "packageManager": "pnpm@7.12.0",
+  "description": "",
+  "author": "Vincent Chen <vincent.cy@foxmail.com>",
+  "license": "MIT",
+  "funding": "https://github.com/vincent-cy/check-update.git",
+  "homepage": "https://github.com/vincent-cy/check-update#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vincent-cy/check-update.git"
   },
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "homepage": "https://github.com/vincent-cy/check-update",
+  "bugs": "https://github.com/vincent-cy/check-update/issues",
+  "keywords": [],
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/*",
+        "./dist/index.d.ts"
+      ]
+    }
+  },
   "files": [
-    "lib/**/*"
+    "dist"
   ],
+  "scripts": {
+    "build": "unbuild",
+    "dev": "unbuild --stub",
+    "lint": "eslint .",
+    "prepublishOnly": "nr build",
+    "release": "bumpp && npm publish",
+    "start": "esno src/index.ts",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
   "devDependencies": {
-    "typescript": "^4.9.4"
+    "@antfu/eslint-config": "^0.35.2",
+    "@antfu/ni": "^0.20.0",
+    "@antfu/utils": "^0.7.2",
+    "@types/node": "^18.13.0",
+    "bumpp": "^8.2.1",
+    "eslint": "^8.34.0",
+    "esno": "^0.16.3",
+    "pnpm": "^7.27.0",
+    "rimraf": "^4.1.2",
+    "typescript": "^4.9.5",
+    "unbuild": "^1.1.1",
+    "vite": "^4.1.1",
+    "vitest": "^0.28.5"
   }
 }

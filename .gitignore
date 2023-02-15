@@ -1,6 +1,11 @@
-lib
-node_modules
-pnpm-lock.yaml
-package-lock.json
-index.html
+.cache
+.DS_Store
 .idea
+*.log
+*.tgz
+coverage
+dist
+lib-cov
+logs
+node_modules
+temp
