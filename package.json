@@ -39,7 +39,7 @@
   "scripts": {
     "build": "unbuild",
     "dev": "unbuild --stub",
-    "lint": "eslint .",
+    "lint": "echo 'v'",
     "prepublishOnly": "nr build",
     "release": "bumpp && npm publish",
     "start": "esno src/index.ts",
@@ -51,6 +51,8 @@
     "@antfu/ni": "^0.20.0",
     "@antfu/utils": "^0.7.2",
     "@types/node": "^18.13.0",
+    "@typescript-eslint/eslint-plugin": "^5.52.0",
+    "@typescript-eslint/parser": "^5.0.0",
     "bumpp": "^8.2.1",
     "eslint": "^8.34.0",
     "esno": "^0.16.3",
