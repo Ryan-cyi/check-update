@@ -48,9 +48,13 @@ const defaultOption: I_CheckOptions = {
 
 class HtmlCheckUpdate_ {
     before_scripts: string[];
+
     current_scripts: string[];
+
     confirm: Function | undefined;
+
     options: I_CheckOptions;
+    
     constructor(props: I_CheckOptions) {
         this.before_scripts = [];
         this.current_scripts = [];

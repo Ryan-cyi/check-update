@@ -99,5 +99,6 @@ export function showDialog(payload: IDialogPayload) {
         const box = container(dialog);
 
         document.body.append(box);
+        
     });
 }

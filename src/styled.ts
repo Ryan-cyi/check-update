@@ -1,4 +1,4 @@
-const tags = ["button", "div", "span"] as const;
+const tags = ["button", "div", "span", "p"] as const;
 
 function serializeStyles(args: any[], props: any) {
     let styles = "";
