@@ -7,3 +7,7 @@ export function delay(timer = 5000) {
 export function validTime(num: number): boolean {
     return num > 0;
 }
+
+export function test(){
+    return null
+}
